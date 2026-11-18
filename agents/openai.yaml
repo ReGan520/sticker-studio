@@ -1,0 +1,4 @@
+interface:
+  display_name: "表情包制作室"
+  short_description: "设计原创 IP 并制作静态、GIF 和微信投稿表情包"
+  default_prompt: "使用 $sticker-studio 为我的角色制作一套表情包。"

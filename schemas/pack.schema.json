@@ -1,0 +1,279 @@
+{
+  "type": "object",
+  "properties": {
+    "version": {
+      "const": 1,
+      "type": "integer"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "character": {
+      "type": "string",
+      "minLength": 1
+    },
+    "size": {
+      "type": "integer",
+      "minimum": 64,
+      "maximum": 1024
+    },
+    "font": {
+      "type": "string",
+      "minLength": 1
+    },
+    "font_index": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 99
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_-]{0,47}$"
+          },
+          "kind": {
+            "enum": [
+              "png",
+              "gif"
+            ]
+          },
+          "source": {
+            "type": "string",
+            "minLength": 1
+          },
+          "caption": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "meaning": {
+            "type": "string",
+            "minLength": 1
+          },
+          "caption_position": {
+            "enum": [
+              "top",
+              "bottom"
+            ]
+          },
+          "pixel_art": {
+            "type": "boolean"
+          },
+          "no_text_copy": {
+            "type": "boolean"
+          },
+          "loop": {
+            "enum": [
+              "repeat",
+              "once"
+            ]
+          },
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "ms": {
+                  "type": "integer",
+                  "minimum": 20,
+                  "maximum": 10000,
+                  "multipleOf": 10
+                }
+              },
+              "required": [
+                "source",
+                "ms"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 2,
+            "maxItems": 120
+          },
+          "layers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "poses": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "ms": {
+                        "type": "integer",
+                        "minimum": 20,
+                        "maximum": 10000,
+                        "multipleOf": 10
+                      },
+                      "x": {
+                        "type": "integer",
+                        "minimum": -2048,
+                        "maximum": 2048
+                      },
+                      "y": {
+                        "type": "integer",
+                        "minimum": -2048,
+                        "maximum": 2048
+                      },
+                      "angle": {
+                        "type": "number",
+                        "minimum": -180,
+                        "maximum": 180
+                      },
+                      "scale": {
+                        "type": "number",
+                        "minimum": 0.1,
+                        "maximum": 3
+                      },
+                      "opacity": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      "tween": {
+                        "enum": [
+                          "linear",
+                          "ease-in-out"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "ms"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "minItems": 2,
+                  "maxItems": 120
+                }
+              },
+              "required": [
+                "source",
+                "poses"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "maxItems": 12
+          },
+          "generation": {
+            "$ref": "#/$defs/generation"
+          }
+        },
+        "required": [
+          "id",
+          "kind"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "const": "png"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "source"
+              ],
+              "not": {
+                "anyOf": [
+                  {
+                    "required": [
+                      "frames"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "layers"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "loop"
+                    ]
+                  }
+                ]
+              }
+            },
+            "else": {
+              "oneOf": [
+                {
+                  "required": [
+                    "frames"
+                  ]
+                },
+                {
+                  "required": [
+                    "layers"
+                  ]
+                }
+              ],
+              "not": {
+                "required": [
+                  "source"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "minItems": 1,
+      "maxItems": 120
+    },
+    "wechat": {
+      "type": "object"
+    },
+    "generation": {
+      "$ref": "#/$defs/generation"
+    }
+  },
+  "required": [
+    "version",
+    "title",
+    "items"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "generation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "style": {
+          "type": "string",
+          "minLength": 1
+        },
+        "exaggeration": {
+          "enum": [
+            "auto",
+            "subtle",
+            "strong",
+            "extreme"
+          ]
+        },
+        "composition": {
+          "enum": [
+            "auto",
+            "head",
+            "half-body",
+            "full-body"
+          ]
+        }
+      }
+    }
+  }
+}
